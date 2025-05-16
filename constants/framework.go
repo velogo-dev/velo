@@ -9,6 +9,7 @@ const (
 	Svelte  Library = "svelte"
 	Angular Library = "angular"
 	Solid   Library = "solid"
+	Astro   Library = "astro"
 )
 
 // Framework represents a specific implementation of a UI framework
@@ -51,6 +52,11 @@ var (
 	SolidVite  = Framework{Parent: Solid, Name: "vite"}
 )
 
+// Astro-based frameworks
+var (
+	AstroVite = Framework{Parent: Astro, Name: "vite"}
+)
+
 // AvailableLibraries defines the supported frontend libraries
 var AvailableLibraries = []Library{
 	React,
@@ -58,6 +64,7 @@ var AvailableLibraries = []Library{
 	Svelte,
 	Angular,
 	Solid,
+	Astro,
 }
 
 // LibraryFrameworks maps libraries to their popular frameworks
@@ -84,5 +91,8 @@ var LibraryFrameworks = map[Library][]Framework{
 	Solid: {
 		SolidStart,
 		SolidVite,
+	},
+	Astro: {
+		AstroVite,
 	},
 }
