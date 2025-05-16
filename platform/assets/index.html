@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+      <meta charset="UTF-8" />
+      <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <title>Golang Mobile Framework</title>
+  <script type="module" crossorigin src="/assets/index-BdIG18_x.js"></script>
+  <link rel="stylesheet" crossorigin href="/assets/index-BgM4J5bV.css">
+</head>
+
+<body>
+      <div id="root"></div>
+      <script>
+            // Bridge communication with WebView
+            function detectPlatform() {
+                  const platformInfo = document.getElementById('platform-info');
+                  if (window.AndroidBridge) {
+                        platformInfo.textContent = 'Running on Android: ' + window.AndroidBridge.getPlatformInfo();
+                  } else if (window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.iOSBridge) {
+                        window.webkit.messageHandlers.iOSBridge.postMessage({ action: 'getPlatformInfo' });
+                        // iOS will call setPlatformInfo function
+                  } else {
+                        platformInfo.textContent = 'Running in web browser';
+                  }
+            }
+
+            // Called by iOS WebView
+            function setPlatformInfo(info) {
+                  const platformInfo = document.getElementById('platform-info');
+                  platformInfo.textContent = 'Running on iOS: ' + info;
+            }
+
+            // Initialize platform detection on load
+            window.onload = detectPlatform;
+      </script>
+</body>
+
+</html>
