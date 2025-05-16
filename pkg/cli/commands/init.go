@@ -2,144 +2,237 @@
 package commands
 
 import (
+	"context"
 	"fmt"
 	"os"
+	"strings"
 
 	"github.com/charmbracelet/huh"
 	"github.com/velogo-dev/velo/constants"
 	"github.com/velogo-dev/velo/internal"
 )
 
-// CLI is an interface that command implementations can use
-// without creating import cycles
-type CLI interface {
-	Version() string
-	ShowHelp()
-	RegisterCommand(name, description, usage string, action func(CLI) error)
-}
+// commandLineFlags for the init command
+var (
+	appName   string
+	library   string
+	framework string
+)
 
-// InitCommand implements the 'init' command to create a new Velo project
-func InitCommand(cli CLI) error {
-	fmt.Println("Initializing a new Velo project...")
+// InitCommand implements the 'init' command to create a new Velo project.
+//
+// This command guides users through the process of creating a new Velo project
+// either interactively or using command-line arguments. It supports specifying
+// the application name, UI library, and framework (template) options.
+//
+// Parameters:
+//   - ctx: A context.Context for cancellation support
+//   - args: Command-line arguments passed to the init command
+//
+// Command syntax:
+//   - velo init
+//   - velo init <app-name>
+//   - velo init <app-name> --library|-l <library-name>
+//   - velo init <app-name> --library|-l <library-name> --framework|-f <framework-name>
+//
+// Returns:
+//   - error: nil on successful completion, otherwise an error describing what went wrong
+func (c *command) InitCommand(ctx context.Context, args []string) error {
+	// Reset global variables to avoid state persistence between command invocations
+	appName = ""
+	library = ""
+	framework = ""
 
-	// Extract data from the CLI instance
-	app, ok := cli.(*App)
-	if !ok {
-		return fmt.Errorf("invalid CLI implementation")
+	// Interactive mode (no arguments)
+	if len(args) == 0 {
+		if err := withAppName(); err != nil {
+			return fmt.Errorf("failed to get application name: %w", err)
+		}
+
+		selectLibrary()
+		selectFramework()
+		return install()
 	}
 
-	// If no app name is provided, run the interactive init
-	if len(app.Args) == 1 || (len(app.Args) > 1 && app.Args[1] == "--interactive") {
-		return runInteractiveInit(app)
+	// Process first argument as app name if provided
+	if len(args) > 0 && !strings.HasPrefix(args[0], "-") {
+		appName = args[0]
 	}
 
-	// Process init arguments
-	if len(app.Args) > 1 {
-		app.AppName = app.Args[1]
-		fmt.Printf("Creating new project: %s\n", app.AppName)
-
-		// Check for framework flag
-		for i := 2; i < len(app.Args); i++ {
-			if app.Args[i] == "--framework" || app.Args[i] == "-f" {
-				if i+1 < len(app.Args) {
-					app.Framework = app.Args[i+1]
-					i++
-				}
-			} else if app.Args[i] == "--template" || app.Args[i] == "-t" {
-				if i+1 < len(app.Args) {
-					app.SubFramework = app.Args[i+1]
-					i++
-				}
+	// Process command line flags
+	for i := 0; i < len(args); i++ {
+		switch args[i] {
+		case "--library", "-l":
+			if i+1 < len(args) {
+				library = args[i+1]
+				i++ // Skip next argument as it's the value
+			} else {
+				return fmt.Errorf("missing value for %s flag", args[i])
+			}
+		case "--framework", "-f":
+			if i+1 < len(args) {
+				framework = args[i+1]
+				i++ // Skip next argument as it's the value
+			} else {
+				return fmt.Errorf("missing value for %s flag", args[i])
+			}
+		case "--name", "-n":
+			if i+1 < len(args) {
+				appName = args[i+1]
+				i++ // Skip next argument as it's the value
+			} else {
+				return fmt.Errorf("missing value for %s flag", args[i])
 			}
 		}
 	}
 
-	// Default values if not provided
-	if app.Framework == "" {
-		app.Framework = string(constants.React)
-	}
-
-	if app.SubFramework == "" {
-		if templates, ok := app.FrameworkTemplates[constants.Framework(app.Framework)]; ok && len(templates) > 0 {
-			app.SubFramework = templates[0].Name
+	// Validate that we have an app name
+	if appName == "" {
+		if err := withAppName(); err != nil {
+			return fmt.Errorf("failed to get application name: %w", err)
 		}
 	}
 
-	// Install the project
-	installer := internal.NewFrameworkInstaller(constants.Framework(app.Framework),
-		constants.SubFramework{Parent: constants.Framework(app.Framework), Name: app.SubFramework}, app.AppName)
-	return installer.Install()
+	// If library is provided but framework isn't, prompt for framework
+	if library != "" && framework == "" {
+		// Validate the provided library is supported
+		if !isValidLibrary(library) {
+			return fmt.Errorf("unsupported library: %s. Available libraries: %s",
+				library, strings.Join(getLibraryNames(constants.AvailableLibraries), ", "))
+		}
+		selectFramework()
+	}
+
+	// If neither library nor framework is provided, prompt for both
+	if library == "" {
+		selectLibrary()
+		selectFramework()
+	}
+
+	// Proceed with installation
+	return install()
 }
 
-// App represents the CLI application with all required properties for commands
-type App struct {
-	CLI
-	AppName             string
-	Framework           string
-	SubFramework        string
-	Args                []string
-	AvailableFrameworks []constants.Framework
-	FrameworkTemplates  map[constants.Framework][]constants.SubFramework
-}
-
-// runInteractiveInit runs the interactive initialization process
-func runInteractiveInit(app *App) error {
-	withAppName(app)
-	selectFramework(app)
-	selectSubFramework(app)
-	return install(app)
-}
-
-// withAppName sets the app name from command line arguments
-func withAppName(app *App) {
-	huh.NewInput().
+// withAppName prompts the user to enter an application name if not provided
+// via command-line arguments.
+//
+// Returns:
+//   - error: nil on successful completion, otherwise an error if the prompt fails
+func withAppName() error {
+	err := huh.NewInput().
 		Title("Enter the name of your application").
-		Value(&app.AppName).
+		Placeholder("my-app").
+		Validate(func(s string) error {
+			if strings.TrimSpace(s) == "" {
+				return fmt.Errorf("application name cannot be empty")
+			}
+			if strings.Contains(s, " ") {
+				return fmt.Errorf("application name cannot contain spaces")
+			}
+			return nil
+		}).
+		Value(&appName).
 		Run()
+
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
-// selectFramework allows the user to select a framework
-func selectFramework(app *App) {
+// selectLibrary displays an interactive prompt for the user to select
+// a UI library from the available options.
+func selectLibrary() {
 	err := huh.NewForm(
 		huh.NewGroup(
 			huh.NewSelect[string]().
-				Title("Select the framework you want to use").
-				Options(makeStringOptions(getFrameworkNames(app.AvailableFrameworks))...).
-				Value(&app.Framework),
+				Title("Select the library you want to use").
+				Options(makeStringOptions(getLibraryNames(constants.AvailableLibraries))...).
+				Value(&library),
 		),
 	).WithTheme(huh.ThemeDracula()).Run()
+
+	if err != nil {
+		fmt.Println("Error selecting library:", err)
+		os.Exit(1)
+	}
+}
+
+// selectFramework displays an interactive prompt for the user to select
+// a framework/template for the previously selected library.
+func selectFramework() {
+	// Get available frameworks for the selected library
+	frameworks := constants.LibraryFrameworks[constants.Library(library)]
+	if len(frameworks) == 0 {
+		fmt.Printf("No frameworks available for library: %s\n", library)
+		os.Exit(1)
+	}
+
+	err := huh.NewForm(
+		huh.NewGroup(
+			huh.NewSelect[string]().
+				Title(fmt.Sprintf("Select the framework for %s", library)).
+				Options(makeStringOptions(getFrameworkNames(frameworks))...).
+				Value(&framework),
+		),
+	).WithTheme(huh.ThemeDracula()).Run()
+
 	if err != nil {
 		fmt.Println("Error selecting framework:", err)
 		os.Exit(1)
 	}
 }
 
-// selectSubFramework allows the user to select a subframework/template
-func selectSubFramework(app *App) {
-	err := huh.NewForm(
-		huh.NewGroup(
-			huh.NewSelect[string]().
-				Title(fmt.Sprintf("Select the template you want to use for %s", app.Framework)).
-				Options(makeStringOptions(getTemplateNames(app.FrameworkTemplates[constants.Framework(app.Framework)]))...).
-				Value(&app.SubFramework),
-		),
-	).WithTheme(huh.ThemeDracula()).Run()
-	if err != nil {
-		fmt.Println("Error selecting sub-framework:", err)
-		os.Exit(1)
+// install creates and initializes a new project using the selected library and framework.
+//
+// Returns:
+//   - error: nil on successful completion, otherwise an error if the installation fails
+func install() error {
+	// Validate that all required parameters are set
+	if appName == "" {
+		return fmt.Errorf("application name not specified")
 	}
-}
+	if library == "" {
+		return fmt.Errorf("library not selected")
+	}
+	if framework == "" {
+		return fmt.Errorf("framework not selected")
+	}
 
-// install handles the installation of the selected framework
-func install(app *App) error {
-	installer := internal.NewFrameworkInstaller(constants.Framework(app.Framework),
-		constants.SubFramework{Parent: constants.Framework(app.Framework), Name: app.SubFramework},
-		app.AppName)
-	// Run synchronously to maintain stdin/stdout/stderr connections for interactive prompts
+	fmt.Printf("Creating new %s project with %s framework in directory: %s\n",
+		library, framework, appName)
+
+	installer := internal.NewFrameworkInstaller(constants.Framework{
+		Parent: constants.Library(library),
+		Name:   framework,
+	}, appName)
+
 	return installer.Install()
 }
 
-// helper function to convert string slice to huh options
+// isValidLibrary checks if the provided library name is supported.
+//
+// Parameters:
+//   - lib: The library name to validate
+//
+// Returns:
+//   - bool: true if the library is supported, false otherwise
+func isValidLibrary(lib string) bool {
+	for _, validLib := range constants.AvailableLibraries {
+		if string(validLib) == lib {
+			return true
+		}
+	}
+	return false
+}
+
+// makeStringOptions converts a string slice to a slice of huh.Option
+//
+// Parameters:
+//   - items: A slice of string values to convert
+//
+// Returns:
+//   - []huh.Option[string]: A slice of options for use with the huh library
 func makeStringOptions(items []string) []huh.Option[string] {
 	options := make([]huh.Option[string], len(items))
 	for i, item := range items {
@@ -148,20 +241,32 @@ func makeStringOptions(items []string) []huh.Option[string] {
 	return options
 }
 
-// helper function to get framework names
-func getFrameworkNames(frameworks []constants.Framework) []string {
-	names := make([]string, len(frameworks))
-	for i, fw := range frameworks {
-		names[i] = string(fw)
+// getLibraryNames extracts the string names of libraries from a slice of constants.Library
+//
+// Parameters:
+//   - libraries: A slice of constants.Library values
+//
+// Returns:
+//   - []string: A slice of library names as strings
+func getLibraryNames(libraries []constants.Library) []string {
+	names := make([]string, len(libraries))
+	for i, lib := range libraries {
+		names[i] = string(lib)
 	}
 	return names
 }
 
-// helper function to get template names
-func getTemplateNames(templates []constants.SubFramework) []string {
-	names := make([]string, len(templates))
-	for i, tmpl := range templates {
-		names[i] = tmpl.Name
+// getFrameworkNames extracts the names of frameworks from a slice of constants.Framework
+//
+// Parameters:
+//   - frameworks: A slice of constants.Framework values
+//
+// Returns:
+//   - []string: A slice of framework names
+func getFrameworkNames(frameworks []constants.Framework) []string {
+	names := make([]string, len(frameworks))
+	for i, fw := range frameworks {
+		names[i] = fw.Name
 	}
 	return names
 }
