@@ -59,6 +59,11 @@ func (f *FrameworkInstaller) Install() error {
 		case constants.SolidVite:
 			return f.installSolidVite()
 		}
+	case constants.Astro:
+		switch f.Framework {
+		case constants.AstroVite:
+			return f.installAstroVite()
+		}
 	default:
 		return fmt.Errorf("framework not supported")
 	}
@@ -148,4 +153,11 @@ func (f *FrameworkInstaller) installSolidVite() error {
 	fmt.Println("⚙️ Installing Solid with Vite with interactive prompts...")
 	fmt.Println("✅ Follow the prompts to configure your Solid application")
 	return utils.RunCmdWait(".", "npm", "create", "vite@latest", f.AppName, "--", "--template", "solid")
+}
+
+// InstallAstroVite installs Astro with Vite
+func (f *FrameworkInstaller) installAstroVite() error {
+	fmt.Println("⚙️ Installing Astro with Vite with interactive prompts...")
+	fmt.Println("✅ Follow the prompts to configure your Astro application")
+	return utils.RunCmdWait(".", "npm", "create", "vite@latest", f.AppName, "--", "--template", "astro")
 }

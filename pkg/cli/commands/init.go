@@ -206,8 +206,12 @@ func install() error {
 		Parent: constants.Library(library),
 		Name:   framework,
 	}, appName)
-
-	return installer.Install()
+	err := installer.Install()
+	if err != nil {
+		return fmt.Errorf("failed to install framework: %w", err)
+	}
+	
+	return nil
 }
 
 // isValidLibrary checks if the provided library name is supported.
