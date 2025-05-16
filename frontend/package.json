@@ -4,12 +4,7 @@
   "scripts": {
     "dev": "vite --host",
     "build": "vite build",
-    "preview": "vite preview",
-    "expo-start": "expo start",
-    "expo-android": "expo start --android",
-    "expo-ios": "expo start --ios",
-    "expo-web": "expo start --web",
-    "expo-eject": "expo eject"
+    "preview": "vite preview"
   },
   "dependencies": {
     "expo": "^50.0.0",

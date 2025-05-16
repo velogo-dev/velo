@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"log"
+	"os"
 	"path/filepath"
 	"time"
 
@@ -33,6 +34,7 @@ func getCurrentTime() string {
 func exitApplication(w *desktop.AppBuilder) func() {
 	return func() {
 		log.Println("Exit requested from JavaScript")
+		os.Exit(0)
 		// In a real application you might want to perform cleanup here
 	}
 }

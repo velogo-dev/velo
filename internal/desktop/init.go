@@ -9,7 +9,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/webview/webview"
+	webview "github.com/webview/webview_go"
 )
 
 // Config holds configuration for the desktop webview
@@ -27,6 +27,9 @@ type Config struct {
 	InitScript  string                 // JavaScript to be injected on page load
 	OnNavigate  func(url string)       // Callback when navigation occurs
 	OnClose     func()                 // Callback when window is closed
+	MenuBar     *MenuBar               // Application menu bar
+	UseHTMLMenu bool                   // Use HTML-based menu instead of native
+	NativeMenu  *NativeMenu            // Native OS menu (untuk menu di level jendela aplikasi)
 }
 
 // DefaultConfig returns a default configuration
@@ -44,6 +47,9 @@ func DefaultConfig() Config {
 		InitScript:  "",
 		OnNavigate:  nil,
 		OnClose:     nil,
+		MenuBar:     nil,
+		UseHTMLMenu: false,
+		NativeMenu:  nil,
 	}
 }
 
@@ -76,6 +82,47 @@ func Run(config Config) error {
 		w.SetSize(config.Width, config.Height, webview.HintNone)
 	} else {
 		w.SetSize(config.Width, config.Height, webview.HintFixed)
+	}
+
+	// Set up native menu (menu level jendela aplikasi) jika ada
+	if config.NativeMenu != nil {
+		config.NativeMenu.SetWebView(w)
+		if err := config.NativeMenu.Install(); err != nil {
+			log.Printf("Warning: Failed to install native menu: %v", err)
+			// Lanjutkan meskipun gagal, karena ini bukan kesalahan fatal
+		}
+	}
+
+	// Set up menu if provided (menu HTML di dalam WebView)
+	if config.MenuBar != nil {
+		config.MenuBar.SetWebView(w)
+
+		// Initialize menu handlers
+		err := config.MenuBar.SetupMenuHandlers()
+		if err != nil {
+			return fmt.Errorf("failed to set up menu handlers: %w", err)
+		}
+
+		// If HTML menu is requested, inject it into the page
+		if config.UseHTMLMenu {
+			menuHTML := config.MenuBar.GenerateCustomMenu()
+			// Using a script to inject the menu into the page when it loads
+			menuInjectionScript := fmt.Sprintf(`
+			document.addEventListener('DOMContentLoaded', function() {
+				const menuContainer = document.createElement('div');
+				menuContainer.id = 'velo-menu-container';
+				menuContainer.innerHTML = %q;
+				document.body.insertBefore(menuContainer, document.body.firstChild);
+			});
+			`, menuHTML)
+
+			// Add this script to the init scripts
+			if config.InitScript != "" {
+				config.InitScript = config.InitScript + "\n" + menuInjectionScript
+			} else {
+				config.InitScript = menuInjectionScript
+			}
+		}
 	}
 
 	// Set initial JavaScript if provided
@@ -294,6 +341,24 @@ func (b *AppBuilder) WithOnNavigate(callback func(url string)) *AppBuilder {
 // WithOnClose sets the close callback
 func (b *AppBuilder) WithOnClose(callback func()) *AppBuilder {
 	b.config.OnClose = callback
+	return b
+}
+
+// WithMenu sets the application menu bar
+func (b *AppBuilder) WithMenu(menuBar *MenuBar) *AppBuilder {
+	b.config.MenuBar = menuBar
+	return b
+}
+
+// WithHTMLMenu enables HTML-based menu rendering
+func (b *AppBuilder) WithHTMLMenu(useHTMLMenu bool) *AppBuilder {
+	b.config.UseHTMLMenu = useHTMLMenu
+	return b
+}
+
+// WithNativeMenu sets the native OS application menu
+func (b *AppBuilder) WithNativeMenu(nativeMenu *NativeMenu) *AppBuilder {
+	b.config.NativeMenu = nativeMenu
 	return b
 }
 
