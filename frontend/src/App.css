@@ -1,0 +1,31 @@
+.app {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 2rem;
+      text-align: center;
+}
+
+.card {
+      padding: 2em;
+}
+
+button {
+      padding: 0.6em 1.2em;
+      font-size: 1em;
+      font-weight: 500;
+      background-color: #646cff;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.25s;
+}
+
+button:hover {
+      background-color: #535bf2;
+}
+
+.platform-info {
+      margin-top: 2rem;
+      font-weight: bold;
+}

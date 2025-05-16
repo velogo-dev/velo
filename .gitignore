@@ -1,0 +1,66 @@
+# Golang
+/bin
+/vendor
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+
+# Node.js
+node_modules/
+/frontend/dist/
+npm-debug.log
+yarn-error.log
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Mobile Shell
+/mobile-shell/assets/
+/mobile-shell/android/.gradle/
+/mobile-shell/android/app/build/
+/mobile-shell/android/build/
+/mobile-shell/android/captures/
+/mobile-shell/android/local.properties
+/mobile-shell/ios/build/
+/mobile-shell/ios/Pods/
+/mobile-shell/ios/xcuserdata/
+/mobile-shell/ios/*.xcworkspace/
+/mobile-shell/ios/DerivedData/
+/mobile-shell/ios/.build/
+/mobile-shell/ios/*.pbxuser
+/mobile-shell/ios/!default.pbxuser
+/mobile-shell/ios/*.mode1v3
+/mobile-shell/ios/!default.mode1v3
+/mobile-shell/ios/*.mode2v3
+/mobile-shell/ios/!default.mode2v3
+/mobile-shell/ios/*.perspectivev3
+/mobile-shell/ios/!default.perspectivev3
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store 
+
+# Build
+/build/
+/dist/
+/node_modules/
+/mobile-shell/
+
+# Expo
+/frontend/node_modules/
+/frontend/ios/
+/frontend/android/
+/frontend/ios/
+/frontend/android/
+/frontend/.expo/
+
+
