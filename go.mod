@@ -5,6 +5,7 @@ go 1.24.2
 require (
 	github.com/charmbracelet/huh v0.7.0
 	github.com/charmbracelet/lipgloss v1.1.0
+	github.com/webview/webview v0.0.0-20230415172654-8387ff8945fc
 )
 
 require (
