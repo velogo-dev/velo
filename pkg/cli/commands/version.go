@@ -3,6 +3,7 @@ package commands
 import (
 	"fmt"
 
+	"github.com/charmbracelet/lipgloss"
 	"github.com/velogo-dev/velo/pkg/utils"
 )
 
@@ -11,6 +12,9 @@ func (c *command) VersionCommand() error {
 	if err != nil {
 		fmt.Printf("Error getting latest git tag: %s\n", err)
 	}
-	fmt.Println("Velo CLI v" + latestTag)
+	titleStyle := lipgloss.NewStyle().
+		Bold(true).
+		Foreground(lipgloss.Color("#00FFFF"))
+	fmt.Println(titleStyle.Render("✨ Velo CLI " + latestTag + " ✨"))
 	return nil
 }
