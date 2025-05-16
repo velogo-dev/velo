@@ -1,5 +1,8 @@
 package constants
 
+import "strings"
+
+
 type Command struct {
 	Name        string
 	Args        []string
@@ -39,28 +42,52 @@ var (
 	}
 	VersionCommand = Command{
 		Name:        "version",
-		Args:        []string{"version"},
+		Args:        []string{"-v", "--version"},
 		Description: "Show the version of a Velo project",
 	}
 )
 
 func GetCommand(name string) Command {
-	switch name {
-	case "init":
-		return InitCommand
-	case "show":
-		return ShowCommand
-	case "build":
-		return BuildCommand
-	case "dev":
-		return DevCommand
-	case "help":
-		return HelpCommand
-	case "doctor":
-		return DoctorCommand
-	case "version":
-		return VersionCommand
+	commands := map[string]Command{
+		"init, -i, --init":       InitCommand,
+		"show,  --show":          ShowCommand,
+		"build,  --build":        BuildCommand,
+		"dev,  --dev":            DevCommand,
+		"help, -h, --help":       HelpCommand,
+		"doctor, --doctor":       DoctorCommand,
+		"version, -v, --version": VersionCommand,
 	}
-
+	for key, command := range commands {
+		if strings.Contains(key, name) {
+			return command
+		}
+	}
 	return Command{}
+}
+
+func AllCommands() []Command {
+	return []Command{
+		InitCommand,
+		ShowCommand,
+		BuildCommand,
+		DevCommand,
+		HelpCommand,
+		DoctorCommand,
+		VersionCommand,
+	}
+}
+
+func GetCommandArgs(name string) []string {
+	return GetCommand(name).Args
+}
+
+// Commands array contains all available CLI commands
+var Commands = []Command{
+	InitCommand,
+	ShowCommand,
+	BuildCommand,
+	DevCommand,
+	HelpCommand,
+	DoctorCommand,
+	VersionCommand,
 }

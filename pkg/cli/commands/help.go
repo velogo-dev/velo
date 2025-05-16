@@ -3,6 +3,8 @@ package commands
 import (
 	"fmt"
 
+	"github.com/charmbracelet/lipgloss"
+	"github.com/velogo-dev/velo/constants"
 	"github.com/velogo-dev/velo/pkg/utils"
 )
 
@@ -10,29 +12,43 @@ import (
 // velo -h
 // velo --help
 func (c *command) HelpCommand() error {
+	// Define styles
+	titleStyle := lipgloss.NewStyle().
+		Bold(true).
+		Foreground(lipgloss.Color("#00FFFF")).
+		MarginBottom(1)
+
+	headerStyle := lipgloss.NewStyle().
+		Bold(true).
+		Foreground(lipgloss.Color("#FFFF00")).
+		PaddingLeft(2).
+		MarginTop(1)
+
+	commandStyle := lipgloss.NewStyle().
+		Foreground(lipgloss.Color("#00FF00")).
+		PaddingLeft(2)
+
+	descriptionStyle := lipgloss.NewStyle().
+		Foreground(lipgloss.Color("#CCCCCC")).
+		PaddingLeft(8)
+
+	// Get version
 	latestTag, err := utils.GetLatestGitTag()
 	if err != nil {
 		fmt.Printf("Error getting latest git tag: %s\n", err)
 	}
-	fmt.Printf("Velo CLI v%s\n\n", latestTag)
-	fmt.Println("Available commands:")
-	fmt.Println("  init")
-	fmt.Println("        Initializes a new Velo project.")
-	fmt.Println("  build")
-	fmt.Println("        Builds the application.")
-	fmt.Println("  dev")
-	fmt.Println("        Runs the application in development mode.")
-	fmt.Println("  doctor")
-	fmt.Println("        Diagnose your environment.")
-	fmt.Println("  update")
-	fmt.Println("        Update the Velo CLI.")
-	fmt.Println("  show")
-	fmt.Println("        Shows various information.")
-	fmt.Println("  generate")
-	fmt.Println("        Code Generation Tools.")
-	fmt.Println("  help")
-	fmt.Println("        Show help.")
-	fmt.Println("\nFlags:")
+
+	// Render title with version
+	fmt.Println(titleStyle.Render("✨ Velo CLI " + latestTag + " ✨"))
+
+	// Render header
+	fmt.Println(headerStyle.Render("Available commands:"))
+
+	// Render commands
+	for _, command := range constants.AllCommands() {
+		fmt.Println(commandStyle.Render("➜ " + command.Name))
+		fmt.Println(descriptionStyle.Render(command.Description))
+	}
 
 	return nil
 }
