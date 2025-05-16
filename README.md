@@ -1,6 +1,6 @@
-# Golang Mobile Framework
+# Velo
 
-A framework for creating mobile applications using Golang with UI from React, Vue, Svelte, or Angular. This framework uses a WebView or Expo approach to wrap web applications into native Android and iOS applications.
+A framework for creating mobile applications using Golang with UI from React, Vue, Svelte, or Angular. This framework uses a WebView approach to wrap web applications into native Android and iOS applications.
 
 ## Features
 

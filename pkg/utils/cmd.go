@@ -28,5 +28,16 @@ func RunCmdInBackground(dir, name string, args ...string) error {
 	cmd.Dir = dir
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
-	return cmd.Start() // Start in background
+	return cmd.Start()
+}
+
+// RunCmdWait executes a shell command and waits for it to complete
+// while allowing for interactive input
+func RunCmdWait(dir, name string, args ...string) error {
+	cmd := exec.Command(name, args...)
+	cmd.Dir = dir
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	cmd.Stdin = os.Stdin // Add stdin for interactive prompts
+	return cmd.Run()
 }
