@@ -2,10 +2,7 @@ module github.com/velogo-dev/velo
 
 go 1.24.2
 
-require (
-	github.com/charmbracelet/huh v0.7.0
-	github.com/charmbracelet/huh/spinner v0.0.0-20250509124401-5fd7cf508477
-)
+require github.com/charmbracelet/huh v0.7.0
 
 require (
 	github.com/atotto/clipboard v0.1.4 // indirect
