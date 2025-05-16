@@ -5,14 +5,10 @@ import (
 )
 
 // BuildCommand implements the 'build' command to build the application
-func BuildCommand(cli CLI) error {
+func (c *command) BuildCommand() error {
 	fmt.Println("Building the application...")
 
 	// Extract data from the CLI instance
-	app, ok := cli.(*App)
-	if !ok {
-		return fmt.Errorf("invalid CLI implementation")
-	}
 
 	// Process build arguments
 	var (
@@ -20,15 +16,15 @@ func BuildCommand(cli CLI) error {
 		output      = "./dist"
 	)
 
-	for i := 1; i < len(app.Args); i++ {
-		if app.Args[i] == "--env" || app.Args[i] == "-e" {
-			if i+1 < len(app.Args) {
-				environment = app.Args[i+1]
+	for i := 1; i < len(c.Args); i++ {
+		if c.Args[i] == "--env" || c.Args[i] == "-e" {
+			if i+1 < len(c.Args) {
+				environment = c.Args[i+1]
 				i++
 			}
-		} else if app.Args[i] == "--output" || app.Args[i] == "-o" {
-			if i+1 < len(app.Args) {
-				output = app.Args[i+1]
+		} else if c.Args[i] == "--output" || c.Args[i] == "-o" {
+			if i+1 < len(c.Args) {
+				output = c.Args[i+1]
 				i++
 			}
 		}

@@ -6,7 +6,7 @@ import (
 )
 
 // DoctorCommand implements the 'doctor' command to diagnose the environment
-func DoctorCommand(cli CLI) error {
+func (c *command) DoctorCommand() error {
 	fmt.Println("Diagnosing your environment...")
 
 	// Display system information

@@ -8,52 +8,52 @@ import (
 )
 
 type FrameworkInstaller struct {
-	Framework    constants.Framework
-	SubFramework constants.SubFramework
-	AppName      string
+	Library   constants.Library
+	Framework constants.Framework
+	AppName   string
 }
 
 // InstallFramework installs a framework and its sub-framework
-func NewFrameworkInstaller(framework constants.Framework, subFramework constants.SubFramework, appName string) *FrameworkInstaller {
+func NewFrameworkInstaller(framework constants.Framework, appName string) *FrameworkInstaller {
 	return &FrameworkInstaller{
-		Framework:    framework,
-		SubFramework: subFramework,
-		AppName:      appName,
+		Library:   framework.Parent,
+		Framework: framework,
+		AppName:   appName,
 	}
 }
 
 func (f *FrameworkInstaller) Install() error {
-	switch f.Framework {
+	switch f.Library {
 	case constants.React:
-		switch f.SubFramework {
+		switch f.Framework {
 		case constants.CreateReactApp:
 			return f.installCreateReactApp()
 		case constants.NextJS:
 			return f.installNextJS()
 		}
 	case constants.Vue:
-		switch f.SubFramework {
+		switch f.Framework {
 		case constants.Nuxt:
 			return f.installNuxt()
 		case constants.Quasar:
 			return f.installQuasar()
 		}
 	case constants.Svelte:
-		switch f.SubFramework {
+		switch f.Framework {
 		case constants.SvelteKit:
 			return f.installSvelteKit()
 		case constants.SvelteVite:
 			return f.installSvelteVite()
 		}
 	case constants.Angular:
-		switch f.SubFramework {
+		switch f.Framework {
 		case constants.AngularUniversal:
 			return f.installAngularUniversal()
 		case constants.Nest:
 			return f.installNest()
 		}
 	case constants.Solid:
-		switch f.SubFramework {
+		switch f.Framework {
 		case constants.SolidStart:
 			return f.installSolidStart()
 		case constants.SolidVite:
