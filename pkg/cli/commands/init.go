@@ -43,7 +43,6 @@ func (c *command) InitCommand(ctx context.Context, args []string) error {
 	appName = ""
 	library = ""
 	framework = ""
-
 	// Interactive mode (no arguments)
 	if len(args) == 0 {
 		if err := withAppName(); err != nil {

@@ -12,8 +12,8 @@ type Command struct {
 var (
 	InitCommand = Command{
 		Name:        "init",
-		Args:        []string{"init", "<app-name>", "--framework", "<framework>", "--template", "<template>"},
-		Description: "Initialize a new Velo project example: velo init -n my-app --framework react --template nextjs",
+		Args:        []string{"init", "<app-name>", "--library", "<library>", "--framework", "<framework>", "--template", "<template>"},
+		Description: "Initialize a new Velo project example: velo init -n my-app --library react --framework nextjs --template nextjs",
 	}
 	ShowCommand = Command{
 		Name:        "show",

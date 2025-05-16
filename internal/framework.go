@@ -103,28 +103,32 @@ func (f *FrameworkInstaller) installSvelteKit() error {
 
 // InstallSvelteVite installs Svelte with Vite
 func (f *FrameworkInstaller) installSvelteVite() error {
+	fmt.Println("⚙️ Installing Svelte with Vite with interactive prompts...")
+	fmt.Println("✅ Follow the prompts to configure your Svelte application")
 	return utils.RunCmdWait(".", "npm", "create", "vite@latest", f.AppName, "--", "--template", "svelte")
 }
 
 // InstallAngularUniversal installs Angular Universal
 func (f *FrameworkInstaller) installAngularUniversal() error {
+	fmt.Println("⚙️ Installing Angular Universal with interactive prompts...")
+	fmt.Println("✅ Follow the prompts to configure your Angular Universal application")
 	// First, we need to install Angular CLI
-	if err := utils.RunCmd("npm", "install", "-g", "@angular/cli"); err != nil {
+	if err := utils.RunCmdWait(".", "npm", "install", "-g", "@angular/cli"); err != nil {
 		return err
 	}
 	// Create a new Angular app
-	if err := utils.RunCmd("ng", "new", f.AppName); err != nil {
+	if err := utils.RunCmdWait(".", "ng", "new", f.AppName); err != nil {
 		return err
 	}
 	// Add Angular Universal
-	return utils.RunCmdWithDir(f.AppName, "ng", "add", "@nguniversal/express-engine")
+	return utils.RunCmdWait(f.AppName, "ng", "add", "@nguniversal/express-engine")
 }
 
 // InstallNest installs Nest.js
 func (f *FrameworkInstaller) installNest() error {
 	fmt.Println("⚙️ Installing Nest.js CLI and setting up a new project...")
 	// Install Nest CLI
-	if err := utils.RunCmd("npm", "install", "-g", "@nestjs/cli"); err != nil {
+	if err := utils.RunCmdWait(".", "npm", "install", "-g", "@nestjs/cli"); err != nil {
 		return err
 	}
 	fmt.Println("✅ Follow the prompts to configure your Nest.js application")
@@ -134,10 +138,14 @@ func (f *FrameworkInstaller) installNest() error {
 
 // InstallSolidStart installs SolidStart
 func (f *FrameworkInstaller) installSolidStart() error {
+	fmt.Println("⚙️ Installing SolidStart with interactive prompts...")
+	fmt.Println("✅ Follow the prompts to configure your SolidStart application")
 	return utils.RunCmdWait(".", "npx", "create-solid@latest", f.AppName, "--template", "start")
 }
 
 // InstallSolidVite installs Solid with Vite
 func (f *FrameworkInstaller) installSolidVite() error {
+	fmt.Println("⚙️ Installing Solid with Vite with interactive prompts...")
+	fmt.Println("✅ Follow the prompts to configure your Solid application")
 	return utils.RunCmdWait(".", "npm", "create", "vite@latest", f.AppName, "--", "--template", "solid")
 }
