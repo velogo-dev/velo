@@ -30,10 +30,11 @@ var (
 //   - args: Command-line arguments passed to the init command
 //
 // Command syntax:
-//   - velo init
-//   - velo init <app-name>
-//   - velo init <app-name> --library|-l <library-name>
-//   - velo init <app-name> --library|-l <library-name> --framework|-f <framework-name>
+//
+//	velo init
+//	velo init <app-name>
+//	velo init <app-name> --library|-l <library-name>
+//	velo init <app-name> --library|-l <library-name> --framework|-f <framework-name>
 //
 // Returns:
 //   - error: nil on successful completion, otherwise an error describing what went wrong

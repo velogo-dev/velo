@@ -2,8 +2,6 @@ package commands
 
 import (
 	"fmt"
-	"os/exec"
-	"strings"
 
 	"github.com/velogo-dev/velo/pkg/utils"
 )
@@ -14,7 +12,7 @@ import (
 func (c *command) HelpCommand() error {
 	latestTag, err := utils.GetLatestGitTag()
 	if err != nil {
-		return err
+		fmt.Printf("Error getting latest git tag: %s\n", err)
 	}
 	fmt.Printf("Velo CLI v%s\n\n", latestTag)
 	fmt.Println("Available commands:")
@@ -37,13 +35,4 @@ func (c *command) HelpCommand() error {
 	fmt.Println("\nFlags:")
 
 	return nil
-}
-
-func getLatestGitTag() (string, error) {
-	cmd := exec.Command("git", "describe", "--tags", "--abbrev=0")
-	output, err := cmd.Output()
-	if err != nil {
-		return "", err
-	}
-	return strings.TrimSpace(string(output)), nil
 }

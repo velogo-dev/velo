@@ -36,6 +36,9 @@ func New(options ...func(*VeloCLI)) *VeloCLI {
 }
 
 func (c *VeloCLI) Run() error {
+	if len(os.Args) == 1 {
+		return commands.NewCommand().HelpCommand()
+	}
 	switch os.Args[1] {
 	case constants.InitCommand.Name:
 		return commands.NewCommand().InitCommand(context.Background(), os.Args[2:])
@@ -50,7 +53,7 @@ func (c *VeloCLI) Run() error {
 	case constants.DoctorCommand.Name:
 		return commands.NewCommand().HelpCommand()
 	case constants.VersionCommand.Name:
-		return commands.NewCommand().HelpCommand()
+		return commands.NewCommand().VersionCommand()
 	default:
 		return commands.NewCommand().HelpCommand()
 	}
