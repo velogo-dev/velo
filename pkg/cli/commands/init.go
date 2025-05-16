@@ -5,11 +5,13 @@ import (
 	"context"
 	"fmt"
 	"os"
+	"path/filepath"
 	"strings"
 
 	"github.com/charmbracelet/huh"
 	"github.com/velogo-dev/velo/constants"
 	"github.com/velogo-dev/velo/internal"
+	"github.com/velogo-dev/velo/pkg/utils"
 )
 
 // commandLineFlags for the init command
@@ -210,7 +212,17 @@ func install() error {
 	if err != nil {
 		return fmt.Errorf("failed to install framework: %w", err)
 	}
-	
+	wd, err := os.Getwd()
+	if err != nil {
+		return fmt.Errorf("failed to get working directory: %w", err)
+	}
+	err = os.Chdir(filepath.Join(wd, appName))
+	if err != nil {
+		return fmt.Errorf("failed to change directory: %w", err)
+	}
+
+	utils.GitInit()
+
 	return nil
 }
 

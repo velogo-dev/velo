@@ -65,3 +65,41 @@ yarn-error.log
 
 
 velo
+
+*.apk
+*.ap_
+*.aab
+**bin/
+**gen/
+**out/
+**release/
+**debug/
+**automationTest/
+**gradle/
+**local.properties
+**/.idea/
+**/.gradle/
+**build/
+**captures/
+**outputs/
+**symbols/
+**intermediates/
+**externalNativeBuild/
+**cxx/
+**ndklibs/
+**ndkLibs/
+**libs/
+**jniLibs/
+**gradlew
+**gradlew.bat
+**gradle/wrapper/gradle-wrapper.jar
+**gradle/wrapper/gradle-wrapper.properties
+**keystore.properties
+**keystore.jks
+**user.keystore
+**google-services.json
+**secrets.xml
+**gradle.properties
+# End Generation Here
+
+
