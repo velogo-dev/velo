@@ -15,7 +15,7 @@ A framework for creating mobile applications using Golang with UI from React, Vu
 
 ## Requirements
 
-- Go 1.18 or newer
+- Go 1.24 or newer
 - Node.js and npm
 - Android SDK (for Android builds)
 - Xcode (for iOS builds, macOS only)
@@ -27,6 +27,7 @@ A framework for creating mobile applications using Golang with UI from React, Vu
 - Xcode Command Line Tools
 - Android Studio
 - Xcode
+- Webview [https://github.com/webview/webview](https://github.com/webview/webview)
 
 ## Project Structure
 
