@@ -1,0 +1,179 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+Berikut versi **Markdown yang lebih rapi dan siap disalin ke `README.md` GitHub**:
+
+```markdown
+# 🚀 Velo - Cross Platform Framework with Golang + Web Technology
+
+**Velo** adalah framework **open source multiplatform** yang dibangun menggunakan **Golang** dan **teknologi web (HTML, CSS, JS)** untuk mengembangkan aplikasi lintas platform dalam satu basis kode.
+
+Target platform:
+
+- ✅ Desktop (Windows, macOS, Linux)
+- ✅ Android
+- ✅ iOS
+- ✅ Web
+
+---
+
+## 🌟 Fitur Utama
+
+- 🧠 Arsitektur modular berbasis Golang
+- 🎨 UI fleksibel berbasis HTML/CSS/JS
+- 🪟 Webview rendering untuk semua platform
+- 🔁 Komunikasi dua arah (Golang ↔ JavaScript)
+- 🛠️ CLI tool (`velo`) untuk scaffolding, build, dan dev
+- 💡 Hot Reload (khusus Web & Desktop)
+
+---
+
+## 📦 Teknologi yang Digunakan
+
+| Komponen         | Teknologi                            |
+|------------------|----------------------------------------|
+| Backend Core     | Golang                                 |
+| UI               | HTML, CSS, JavaScript (Vite)           |
+| WebView Engine   | WebView2, WKWebView, Android WebView   |
+| CLI Tooling      | Cobra / urfave/cli (Golang)            |
+| Mobile Binding   | gomobile bind                          |
+| Desktop Wrapper  | Wails / Webview                        |
+
+---
+
+## 🛠️ Roadmap Pengembangan
+
+### 1. 📐 Perencanaan dan Arsitektur
+
+- [ ] Tentukan core goals: performa tinggi, kode tunggal, native feel
+- [ ] Pilih engine WebView: WebView2, WKWebView, Webview (Android), Wails
+- [ ] Struktur proyek modular:
+
+  ```
+  /core
+  /platform/desktop
+  /platform/android
+  /platform/ios
+  /platform/web
+  ```
+
+- [ ] Rancang komunikasi dua arah Golang ↔ JS
+- [ ] Buat sistem plugin dan build toolchain
+
+---
+
+### 2. ⚙️ Core Engine Development
+
+- [ ] Lifecycle management
+- [ ] Event bus dan state management
+- [ ] Modul routing (SPA style)
+- [ ] CLI: `velo create`, `velo dev`, `velo build`
+- [ ] Hot reload (web & desktop)
+
+---
+
+### 3. 🌍 Platform: Web
+
+- [ ] HTML5 renderer
+- [ ] Build pipeline (vite/rollup + Go backend)
+- [ ] WebSocket bridge Golang ↔ UI
+- [ ] Buat proyek demo sederhana
+
+---
+
+### 4. 🖥️ Platform: Desktop
+
+- [ ] Gunakan Wails atau `webview`
+- [ ] Komunikasi JS ↔ Go
+- [ ] Integrasi: file system, native dialogs, system tray
+- [ ] Buat aplikasi desktop pertama
+
+---
+
+### 5. 📱 Platform: Android
+
+- [ ] WebView dengan `gomobile`
+- [ ] JNI binding antara Java ↔ Go
+- [ ] Android SDK wrapper
+- [ ] Buat app contoh dengan splash screen, permission, dll
+
+---
+
+### 6. 🍎 Platform: iOS
+
+- [ ] Gunakan `WKWebView` + `gomobile bind`
+- [ ] Setup project Xcode
+- [ ] Objective-C ↔ Go binding
+- [ ] Buat demo app Velo iOS
+
+---
+
+### 7. 🔧 Tooling dan Ekosistem
+
+- [ ] CLI Tool:
+  - `velo create`
+  - `velo dev`
+  - `velo build`
+- [ ] Plugin System: auth, storage, camera, dll
+- [ ] UI Components (VeloUI) berbasis web
+
+---
+
+### 8. 📚 Dokumentasi & Distribusi
+
+- [ ] Website resmi + playground
+- [ ] Dokumentasi lengkap
+- [ ] Contoh aplikasi (todo app, chat, POS, dsb)
+- [ ] CI/CD multiplatform
+- [ ] Rilis open source (MIT/BSD)
+
+---
+
+## 📁 Struktur Direktori Awal
+
+```
+velo/
+├── core/
+│   ├── runtime/
+│   ├── bridge/
+│   └── plugin/
+├── cli/
+│   └── main.go
+├── platform/
+│   ├── desktop/
+│   ├── android/
+│   ├── ios/
+│   └── web/
+├── examples/
+└── docs/
+```
+
+---
+
+## 🙌 Kontribusi
+
+Kami menyambut kontribusi untuk:
+
+- Peningkatan performa dan stabilitas
+- Fitur native tambahan
+- Plugin baru (camera, file system, auth)
+- Dokumentasi dan contoh aplikasi
+
+---
+
+## 📄 Lisensi
+
+Velo dirilis di bawah lisensi **MIT License**.
+
+---
+
+## 🔗 Komunitas & Kontak
+
+- GitHub: [https://github.com/yourusername/velo](mdc:https:/github.com/yourusername/velo)
+- Discord: (Coming Soon)
+- Website: (Coming Soon)
+```
+
+Silakan kamu ganti bagian `yourusername` di GitHub URL dengan username GitHub-mu. Kalau kamu butuh file `README.md` dalam bentuk file langsung, tinggal minta saja.
